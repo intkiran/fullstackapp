@@ -9,20 +9,24 @@ var dbURI = "mongodb://localhost:27017/products";
 // Create the database connection
 //see: http://stackoverflow.com/a/26164828
 var connectionWithRetry = () => {
-  return mongoose.connect(dbURI, error => {
-    if (error) {
-      console.error(
-        "Failed to connect to mongo on startup - retrying in 5 sec",
-        error
-      );
-      if (
-        mongoose.connection.readyState != 1 &&
-        mongoose.connection.readyState != 2
-      ) {
-        setTimeout(connectionWithRetry, 5000);
+  return mongoose.connect(
+    dbURI,
+    { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true },
+    error => {
+      if (error) {
+        console.error(
+          "Failed to connect to mongo on startup - retrying in 5 sec",
+          error
+        );
+        if (
+          mongoose.connection.readyState != 1 &&
+          mongoose.connection.readyState != 2
+        ) {
+          setTimeout(connectionWithRetry, 5000);
+        }
       }
     }
-  });
+  );
 };
 connectionWithRetry();
 // CONNECTION EVENTS
